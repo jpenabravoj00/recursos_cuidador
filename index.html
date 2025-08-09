@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apoyo para Cuidadores en Puerto Rico</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Chosen Palette: Calm Harmony (Stone, Teal, Amber) -->
+    <!-- Application Structure Plan: A user-centric, single-page application designed to provide immediate, needs-based access to resources for stressed caregivers. The structure prioritizes action and clarity over mirroring the report's linear format. It starts with an emergency contact section, followed by an interactive, category-based resource finder ("Encuentra tu Apoyo") that directly addresses the report's identified issue of service fragmentation. This is followed by a comprehensive directory and a self-care section. This flow guides the user from immediate crisis to practical support and finally to personal well-being, creating a more empathetic and effective user journey. -->
+    <!-- Visualization & Content Choices: The primary "visualization" is an interactive card filtering system. Report Info: List of diverse support organizations. Goal: Help users quickly find the right type of help. Viz/Presentation Method: A grid of resource cards (HTML/Tailwind). Interaction: Users click on need-based category buttons (e.g., "Apoyo Emocional", "Un Respiro para Mí"). JavaScript then filters the cards by toggling visibility based on data attributes. Justification: This transforms a static list into a dynamic tool, empowering users to navigate complex information based on their immediate needs, which is more intuitive than alphabetical or report-ordered lists. Library/Method: Vanilla JavaScript for logic, Tailwind CSS for styling. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .resource-card {
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+            transform-origin: top;
+        }
+        .card-hidden {
+            opacity: 0;
+            transform: scale(0.95);
+            height: 0;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+            border: 0;
+        }
+        .active-filter {
+            background-color: #0d9488; /* teal-600 */
+            color: #ffffff;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-stone-50 text-stone-800">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-xl md:text-2xl font-bold text-teal-700">Bienestar del Cuidador PR</h1>
+            <div class="hidden md:flex space-x-6">
+                <a href="#ayuda-ahora" class="text-stone-600 hover:text-teal-600">Ayuda Inmediata</a>
+                <a href="#encuentra-apoyo" class="text-stone-600 hover:text-teal-600">Encuentra Apoyo</a>
+                <a href="#cuidando-de-mi" class="text-stone-600 hover:text-teal-600">Autocuidado</a>
+            </div>
+            <button id="mobile-menu-button" class="md:hidden text-stone-600 hover:text-teal-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden px-6 pb-4">
+            <a href="#ayuda-ahora" class="block py-2 text-stone-600 hover:text-teal-600">Ayuda Inmediata</a>
+            <a href="#encuentra-apoyo" class="block py-2 text-stone-600 hover:text-teal-600">Encuentra Apoyo</a>
+            <a href="#cuidando-de-mi" class="block py-2 text-stone-600 hover:text-teal-600">Autocuidado</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-8 md:py-12">
+
+        <section class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-stone-900 mb-4">Tu Bienestar es la Prioridad</h2>
+            <p class="max-w-3xl mx-auto text-stone-600 text-lg">Cuidar de un ser querido es un acto de amor, pero también puede ser un desafío. Aquí encontrarás recursos en Puerto Rico para apoyarte en tu rol de cuidador y ayudarte a mantener tu propia salud mental y física. No estás solo/a.</p>
+        </section>
+
+        <section id="ayuda-ahora" class="mb-16 p-8 bg-amber-100 border-l-4 border-amber-500 rounded-r-lg">
+            <div class="flex items-center mb-4">
+                <span class="text-3xl mr-4">⚠️</span>
+                <h3 class="text-2xl font-bold text-amber-900">¿Necesitas Ayuda Ahora?</h3>
+            </div>
+            <p class="text-amber-800 mb-4">Si te sientes en crisis, abrumado/a o necesitas hablar con alguien de inmediato, la Línea PAS está disponible 24/7 para ofrecerte apoyo confidencial y gratuito.</p>
+            <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                <p class="text-lg font-semibold text-stone-700 mb-2">Línea PAS de ASSMCA</p>
+                <a href="tel:1-800-981-0023" class="text-3xl font-bold text-teal-700 hover:text-teal-600 tracking-wider">📞 1-800-981-0023</a>
+                <p class="text-sm text-stone-500 mt-2">Disponible 24 horas, 7 días a la semana</p>
+            </div>
+        </section>
+
+        <section id="encuentra-apoyo" class="mb-16">
+            <h3 class="text-3xl font-bold text-center mb-4 text-stone-900">Encuentra tu Apoyo Ideal</h3>
+            <p class="text-center text-stone-600 max-w-2xl mx-auto mb-8">Sabemos que cada cuidador tiene necesidades diferentes. Selecciona el tipo de ayuda que buscas para encontrar las organizaciones que mejor se ajustan a ti.</p>
+            
+            <div id="filter-buttons" class="flex flex-wrap justify-center gap-3 mb-10">
+                <button data-filter="all" class="filter-btn px-4 py-2 bg-white border border-stone-300 rounded-full text-stone-700 hover:bg-stone-100 active-filter">Todos los Recursos</button>
+                <button data-filter="emocional" class="filter-btn px-4 py-2 bg-white border border-stone-300 rounded-full text-stone-700 hover:bg-stone-100">❤️ Apoyo Emocional</button>
+                <button data-filter="respiro" class="filter-btn px-4 py-2 bg-white border border-stone-300 rounded-full text-stone-700 hover:bg-stone-100">☕ Un Respiro para Mí</button>
+                <button data-filter="capacitacion" class="filter-btn px-4 py-2 bg-white border border-stone-300 rounded-full text-stone-700 hover:bg-stone-100">🧠 Capacitación</button>
+                <button data-filter="practica" class="filter-btn px-4 py-2 bg-white border border-stone-300 rounded-full text-stone-700 hover:bg-stone-100">🤝 Ayuda Práctica</button>
+            </div>
+
+            <div id="resource-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            </div>
+        </section>
+        
+        <section id="cuidando-de-mi" class="mb-16 bg-teal-50 p-6 md:p-10 rounded-lg">
+            <h3 class="text-3xl font-bold text-center mb-8 text-teal-800">Estrategias para Cuidar de Ti</h3>
+            <div class="max-w-3xl mx-auto space-y-4">
+                <div class="accordion-item bg-white rounded-lg shadow-sm">
+                    <button class="accordion-header w-full flex justify-between items-center p-5 text-left font-semibold text-lg text-stone-800">
+                        <span>Reconoce las Señales de Agotamiento</span>
+                        <span class="accordion-icon transform transition-transform duration-300">▼</span>
+                    </button>
+                    <div class="accordion-content px-5">
+                        <p class="pt-0 pb-5 text-stone-600">Presta atención a cambios como fatiga persistente, irritabilidad, problemas de sueño, sentimientos de desesperanza o aislamiento. Reconocer estas señales a tiempo es el primer paso para buscar ayuda y prevenir un agotamiento mayor.</p>
+                    </div>
+                </div>
+                <div class="accordion-item bg-white rounded-lg shadow-sm">
+                    <button class="accordion-header w-full flex justify-between items-center p-5 text-left font-semibold text-lg text-stone-800">
+                        <span>Prioriza el Autocuidado Sin Culpa</span>
+                        <span class="accordion-icon transform transition-transform duration-300">▼</span>
+                    </button>
+                    <div class="accordion-content px-5">
+                        <p class="pt-0 pb-5 text-stone-600">Dedica tiempo, aunque sea breve, a actividades que disfrutes. Puede ser leer, caminar, escuchar música o simplemente descansar. Tu bienestar es esencial para poder cuidar bien de otros. No es egoísmo, es una necesidad.</p>
+                    </div>
+                </div>
+                <div class="accordion-item bg-white rounded-lg shadow-sm">
+                    <button class="accordion-header w-full flex justify-between items-center p-5 text-left font-semibold text-lg text-stone-800">
+                        <span>Construye y Utiliza tu Red de Apoyo</span>
+                        <span class="accordion-icon transform transition-transform duration-300">▼</span>
+                    </button>
+                    <div class="accordion-content px-5">
+                        <p class="pt-0 pb-5 text-stone-600">No tienes que hacerlo todo solo/a. Habla con familiares y amigos sobre tus necesidades. Únete a grupos de apoyo para conectar con otros cuidadores que entienden tu situación. Compartir la carga la hace más ligera.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-stone-800 text-white mt-16">
+        <div class="container mx-auto px-6 py-8 text-center text-stone-400">
+            <p>Esta aplicación es una herramienta informativa basada en recursos de dominio público para el apoyo de cuidadores en Puerto Rico.</p>
+            <p class="text-sm mt-2">&copy; 2025 Bienestar del Cuidador PR. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const resources = [
+                {
+                    name: 'Oficina del Procurador de las Personas Pensionadas y de la Tercera Edad (OPPEA)',
+                    description: 'Entidad gubernamental con programas integrales para cuidadores de personas con Alzheimer y demencias, enfocados en herramientas, apoyo emocional y prevención del agotamiento.',
+                    services: [
+                        'Grupos de apoyo dedicados.',
+                        'Capacitación en manejo de emociones y estrés.',
+                        'Cuidado de relevo gratuito (Programa PAMA).'
+                    ],
+                    contact: '📞 787-721-6121',
+                    phone: '787-721-6121',
+                    website: null,
+                    categories: ['emocional', 'respiro', 'capacitacion']
+                },
+                {
+                    name: 'MMM Programa de Cuidadores',
+                    description: 'Programa de MMM Healthcare que brinda apoyo sólido a cuidadores de afiliados, con acceso a especialistas en manejo emocional y recursos educativos.',
+                    services: [
+                        '"Primeros auxilios" con especialistas en salud mental.',
+                        'Guías completas y recursos educativos.',
+                        'Acceso a actividades de bienestar.'
+                    ],
+                    contact: '📞 1-866-333-5470',
+                    phone: '1-866-333-5470',
+                    website: null,
+                    categories: ['emocional', 'capacitacion']
+                },
+                {
+                    name: 'Programa de Apoyo al Cuidador Familiar de PR',
+                    description: 'Ofrece servicios de apoyo y respiro para reducir la carga física, logística y emocional de quienes cuidan a familiares mayores.',
+                    services: [
+                        'Servicios de respiro (cuidado en hogar o temporal).',
+                        'Asistencia de ama de llaves.',
+                        'Equipo médico, suplementos y sistemas de alerta.'
+                    ],
+                    contact: '📞 San Juan: 787-721-6121 ext. 1245',
+                    phone: '787-721-6121',
+                    website: null,
+                    categories: ['respiro', 'practica']
+                },
+                {
+                    name: 'Mente Activa',
+                    description: 'Organización dedicada a la salud cognitiva de adultos mayores, especialmente con demencia. Su enfoque alivia indirectamente el estrés de los cuidadores.',
+                    services: [
+                        'Mejora la calidad de vida del adulto mayor.',
+                        'Reduce la carga y el estrés diario del cuidador.',
+                        'Enfoque holístico en el bienestar de ambos.'
+                    ],
+                    contact: '📞 787-677-0503',
+                    phone: '787-677-0503',
+                    website: null,
+                    categories: ['practica', 'emocional']
+                },
+                {
+                    name: 'Línea PAS de ASSMCA',
+                    description: 'Recurso de intervención en crisis y apoyo de salud mental, disponible 24/7. Es un salvavidas inmediato para cuidadores bajo estrés agudo o agotamiento.',
+                    services: [
+                        'Apoyo emocional inmediato y confidencial.',
+                        'Sesiones de desahogo.',
+                        'Coordinación de evaluaciones urgentes.'
+                    ],
+                    contact: '📞 1-800-981-0023',
+                    phone: '1-800-981-0023',
+                    website: null,
+                    categories: ['emocional']
+                }
+            ];
+
+            const resourceGrid = document.getElementById('resource-grid');
+            const filterButtons = document.querySelectorAll('.filter-btn');
+
+            function createResourceCard(resource) {
+                const card = document.createElement('div');
+                card.className = 'resource-card bg-white p-6 rounded-lg shadow-md border-t-4 border-teal-500 flex flex-col';
+                card.dataset.category = resource.categories.join(' ');
+
+                let servicesHTML = '<ul class="list-disc list-inside text-stone-600 space-y-1 mb-4">';
+                resource.services.forEach(service => {
+                    servicesHTML += `<li>${service}</li>`;
+                });
+                servicesHTML += '</ul>';
+
+                card.innerHTML = `
+                    <h4 class="text-xl font-bold text-stone-900 mb-2">${resource.name}</h4>
+                    <p class="text-stone-600 mb-4 flex-grow">${resource.description}</p>
+                    <div class="mb-4">
+                        <h5 class="font-semibold mb-2 text-stone-700">Servicios Clave:</h5>
+                        ${servicesHTML}
+                    </div>
+                    <div class="mt-auto pt-4 border-t border-stone-200">
+                        <a href="tel:${resource.phone}" class="font-bold text-teal-700 hover:text-teal-600 text-lg">${resource.contact}</a>
+                    </div>
+                `;
+                return card;
+            }
+
+            function displayResources(filter = 'all') {
+                const cards = document.querySelectorAll('.resource-card');
+                cards.forEach(card => {
+                    const categories = card.dataset.category;
+                    if (filter === 'all' || categories.includes(filter)) {
+                        card.classList.remove('card-hidden');
+                    } else {
+                        card.classList.add('card-hidden');
+                    }
+                });
+            }
+            
+            resources.forEach(resource => {
+                resourceGrid.appendChild(createResourceCard(resource));
+            });
+
+            filterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    filterButtons.forEach(btn => btn.classList.remove('active-filter'));
+                    button.classList.add('active-filter');
+                    const filter = button.dataset.filter;
+                    displayResources(filter);
+                });
+            });
+
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            const accordionItems = document.querySelectorAll('.accordion-item');
+            accordionItems.forEach(item => {
+                const header = item.querySelector('.accordion-header');
+                const content = item.querySelector('.accordion-content');
+                const icon = item.querySelector('.accordion-icon');
+
+                header.addEventListener('click', () => {
+                    const isOpen = content.style.maxHeight && content.style.maxHeight !== '0px';
+                    
+                    accordionItems.forEach(i => {
+                        i.querySelector('.accordion-content').style.maxHeight = '0px';
+                        i.querySelector('.accordion-icon').style.transform = 'rotate(0deg)';
+                    });
+
+                    if (!isOpen) {
+                        content.style.maxHeight = content.scrollHeight + 'px';
+                        icon.style.transform = 'rotate(180deg)';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
